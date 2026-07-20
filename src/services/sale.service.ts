@@ -70,6 +70,7 @@ export type CreateSaleInput = {
   discount: number;
   notes?: string;
   items: SaleItemInput[];
+  createdAt?: string;
 };
 
 export type UpdateSaleInput = Partial<CreateSaleInput>;
