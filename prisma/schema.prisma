@@ -1,0 +1,74 @@
+// This is your Prisma schema file
+// For Prisma v7+, the DATABASE_URL is set in prisma.config.ts
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Session ──────────────────────────────────────────────────────────────────
+model AppSession {
+  id          String   @id @default(cuid())
+  tokenHash   String   @unique
+  label       String   @default("default")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastUsedAt  DateTime @default(now())
+
+  @@map("app_sessions")
+}
+
+// ─── Customer ─────────────────────────────────────────────────────────────────
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sales     Sale[]
+
+  @@map("customers")
+}
+
+// ─── Sale ─────────────────────────────────────────────────────────────────────
+model Sale {
+  id             String     @id @default(cuid())
+  saleNumber     String     @unique
+  customerId     String
+  customer       Customer   @relation(fields: [customerId], references: [id])
+  subtotal       Float
+  discount       Float      @default(0)
+  total          Float
+  paymentMethod  String
+  status         String     @default("Confirmed")
+  whatsappStatus String     @default("Not Sent")
+  notes          String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  items          SaleItem[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("sales")
+}
+
+// ─── SaleItem ─────────────────────────────────────────────────────────────────
+model SaleItem {
+  id        String @id @default(cuid())
+  saleId    String
+  sale      Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  name      String
+  category  String
+  size      String
+  color     String
+  qty       Int
+  unitPrice Float
+
+  @@index([saleId])
+  @@map("sale_items")
+}
