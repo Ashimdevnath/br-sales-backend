@@ -12,12 +12,12 @@ datasource db {
 
 // ─── Session ──────────────────────────────────────────────────────────────────
 model AppSession {
-  id          String   @id @default(cuid())
-  tokenHash   String   @unique
-  label       String   @default("default")
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  lastUsedAt  DateTime @default(now())
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  label      String   @default("default")
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @default(now())
 
   @@map("app_sessions")
 }
