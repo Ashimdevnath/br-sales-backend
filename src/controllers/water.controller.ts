@@ -89,7 +89,7 @@ export async function updateDelivery(req: Request, res: Response): Promise<void>
       res.status(400).json({ error: 'bottles (amount) is required' });
       return;
     }
-    const delivery = await WaterService.updateDelivery(id, Number(bottles));
+    const delivery = await WaterService.updateDelivery(id as string, Number(bottles));
     res.status(200).json(delivery);
   } catch (err) {
     console.error('[WaterController] updateDelivery error:', err);
@@ -120,7 +120,7 @@ export async function updateIndependentBottle(req: Request, res: Response): Prom
       res.status(400).json({ error: 'bottles is required' });
       return;
     }
-    const entry = await WaterService.updateIndependentBottle(id, Number(bottles));
+    const entry = await WaterService.updateIndependentBottle(id as string, Number(bottles));
     res.status(200).json(entry);
   } catch (err) {
     console.error('[WaterController] updateIndependentBottle error:', err);
