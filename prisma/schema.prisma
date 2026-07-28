@@ -72,3 +72,57 @@ model SaleItem {
   @@index([saleId])
   @@map("sale_items")
 }
+
+// ─── Water Business ──────────────────────────────────────────────────────────
+model Society {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  rooms     Room[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("societies")
+}
+
+model Room {
+  id         String          @id @default(cuid())
+  roomNumber String
+  societyId  String
+  society    Society         @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  deliveries WaterDelivery[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@unique([societyId, roomNumber])
+  @@map("rooms")
+}
+
+model WaterDelivery {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  bottles   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("water_deliveries")
+}
+
+model WaterSettings {
+  id        String   @id @default(cuid())
+  unitPrice Float    @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@map("water_settings")
+}
+
+model IndependentBottleEntry {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  bottles   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("independent_bottle_entries")
+}
