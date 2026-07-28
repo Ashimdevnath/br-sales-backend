@@ -59,7 +59,11 @@ export async function createRoom(req: Request, res: Response): Promise<void> {
     }
     const room = await WaterService.createRoom(societyId, roomNumber);
     res.status(201).json(room);
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === 'P2002') {
+      res.status(400).json({ error: 'This room number already exists for the selected society.' });
+      return;
+    }
     console.error('[WaterController] createRoom error:', err);
     res.status(500).json({ error: 'Failed to create room' });
   }
@@ -99,12 +103,12 @@ export async function updateDelivery(req: Request, res: Response): Promise<void>
 
 export async function addIndependentBottle(req: Request, res: Response): Promise<void> {
   try {
-    const { date, bottles } = req.body;
-    if (!date || bottles === undefined) {
-      res.status(400).json({ error: 'date and bottles are required' });
+    const { date, round1 = 0, round2 = 0, round3 = 0, round4 = 0 } = req.body;
+    if (!date) {
+      res.status(400).json({ error: 'date is required' });
       return;
     }
-    const entry = await WaterService.addIndependentBottle(new Date(date), Number(bottles));
+    const entry = await WaterService.addIndependentBottle(date, Number(round1), Number(round2), Number(round3), Number(round4));
     res.status(201).json(entry);
   } catch (err) {
     console.error('[WaterController] addIndependentBottle error:', err);
@@ -115,12 +119,8 @@ export async function addIndependentBottle(req: Request, res: Response): Promise
 export async function updateIndependentBottle(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { bottles } = req.body;
-    if (bottles === undefined) {
-      res.status(400).json({ error: 'bottles is required' });
-      return;
-    }
-    const entry = await WaterService.updateIndependentBottle(id as string, Number(bottles));
+    const { round1 = 0, round2 = 0, round3 = 0, round4 = 0 } = req.body;
+    const entry = await WaterService.updateIndependentBottle(id as string, Number(round1), Number(round2), Number(round3), Number(round4));
     res.status(200).json(entry);
   } catch (err) {
     console.error('[WaterController] updateIndependentBottle error:', err);

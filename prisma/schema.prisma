@@ -120,6 +120,10 @@ model WaterSettings {
 model IndependentBottleEntry {
   id        String   @id @default(cuid())
   date      DateTime @db.Date
+  round1    Int      @default(0)
+  round2    Int      @default(0)
+  round3    Int      @default(0)
+  round4    Int      @default(0)
   bottles   Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

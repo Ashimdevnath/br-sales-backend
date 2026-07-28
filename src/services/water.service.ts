@@ -66,19 +66,21 @@ export async function updateDelivery(id: string, bottles: number) {
 }
 
 // ─── Independent Bottle Delivery ──────────────────────────────────────────────
-export async function addIndependentBottle(date: Date, bottles: number) {
+export async function addIndependentBottle(date: string, round1: number, round2: number, round3: number, round4: number) {
   const normalizedDate = new Date(date);
   normalizedDate.setUTCHours(0, 0, 0, 0);
+  const bottles = round1 + round2 + round3 + round4;
 
   return prisma.independentBottleEntry.create({
-    data: { date: normalizedDate, bottles }
+    data: { date: normalizedDate, round1, round2, round3, round4, bottles }
   });
 }
 
-export async function updateIndependentBottle(id: string, bottles: number) {
+export async function updateIndependentBottle(id: string, round1: number, round2: number, round3: number, round4: number) {
+  const bottles = round1 + round2 + round3 + round4;
   return prisma.independentBottleEntry.update({
     where: { id },
-    data: { bottles }
+    data: { round1, round2, round3, round4, bottles }
   });
 }
 
