@@ -57,7 +57,7 @@ export async function updateSociety(req: Request, res: Response): Promise<void> 
       res.status(400).json({ error: 'Society name is required' });
       return;
     }
-    const society = await WaterService.updateSociety(id, name);
+    const society = await WaterService.updateSociety(id as string, name);
     res.status(200).json(society);
   } catch (err: any) {
     if (err.code === 'P2002') {
@@ -72,7 +72,7 @@ export async function updateSociety(req: Request, res: Response): Promise<void> 
 export async function deleteSociety(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    await WaterService.deleteSociety(id);
+    await WaterService.deleteSociety(id as string);
     res.status(200).json({ message: 'Society deleted successfully' });
   } catch (err) {
     console.error('[WaterController] deleteSociety error:', err);
@@ -108,7 +108,7 @@ export async function updateRoom(req: Request, res: Response): Promise<void> {
       res.status(400).json({ error: 'Room number is required' });
       return;
     }
-    const room = await WaterService.updateRoom(id, roomNumber);
+    const room = await WaterService.updateRoom(id as string, roomNumber);
     res.status(200).json(room);
   } catch (err: any) {
     if (err.code === 'P2002') {
@@ -123,7 +123,7 @@ export async function updateRoom(req: Request, res: Response): Promise<void> {
 export async function deleteRoom(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    await WaterService.deleteRoom(id);
+    await WaterService.deleteRoom(id as string);
     res.status(200).json({ message: 'Room deleted successfully' });
   } catch (err) {
     console.error('[WaterController] deleteRoom error:', err);
