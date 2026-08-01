@@ -78,8 +78,9 @@ model Society {
   id        String   @id @default(cuid())
   name      String   @unique
   rooms     Room[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   @@map("societies")
 }
@@ -92,6 +93,7 @@ model Room {
   deliveries WaterDelivery[]
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
+  deletedAt  DateTime?
 
   @@unique([societyId, roomNumber])
   @@map("rooms")
@@ -124,6 +126,7 @@ model IndependentBottleEntry {
   round2    Int      @default(0)
   round3    Int      @default(0)
   round4    Int      @default(0)
+  round5    Int      @default(0)
   bottles   Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

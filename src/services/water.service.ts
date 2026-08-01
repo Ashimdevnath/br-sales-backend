@@ -23,27 +23,90 @@ export async function updateUnitPrice(unitPrice: number): Promise<WaterSettings>
 // ─── Society ─────────────────────────────────────────────────────────────────
 export async function listSocieties() {
   return prisma.society.findMany({
-    include: { rooms: true },
+    where: { deletedAt: null },
+    include: { 
+      rooms: {
+        where: { deletedAt: null }
+      }
+    },
     orderBy: { createdAt: 'asc' }
   });
 }
 
 export async function createSociety(name: string) {
+  const existing = await prisma.society.findUnique({
+    where: { name }
+  });
+
+  if (existing) {
+    if (existing.deletedAt) {
+      // Restore soft-deleted society
+      return prisma.society.update({
+        where: { id: existing.id },
+        data: { deletedAt: null }
+      });
+    }
+    throw new Error(`Society '${name}' already exists`);
+  }
+
   return prisma.society.create({
     data: { name }
   });
 }
 
+export async function updateSociety(id: string, name: string) {
+  return prisma.society.update({
+    where: { id },
+    data: { name }
+  });
+}
+
+export async function deleteSociety(id: string) {
+  return prisma.society.update({
+    where: { id },
+    data: { deletedAt: new Date() }
+  });
+}
+
 // ─── Room ────────────────────────────────────────────────────────────────────
 export async function createRoom(societyId: string, roomNumber: string) {
+  const existing = await prisma.room.findFirst({
+    where: { societyId, roomNumber }
+  });
+
+  if (existing) {
+    if (existing.deletedAt) {
+      // Restore soft-deleted room
+      return prisma.room.update({
+        where: { id: existing.id },
+        data: { deletedAt: null }
+      });
+    }
+    throw new Error(`Room '${roomNumber}' already exists`);
+  }
+
   return prisma.room.create({
     data: { societyId, roomNumber }
   });
 }
 
+export async function updateRoom(id: string, roomNumber: string) {
+  return prisma.room.update({
+    where: { id },
+    data: { roomNumber }
+  });
+}
+
+export async function deleteRoom(id: string) {
+  return prisma.room.update({
+    where: { id },
+    data: { deletedAt: new Date() }
+  });
+}
+
 export async function getRoomsBySociety(societyId: string) {
   return prisma.room.findMany({
-    where: { societyId },
+    where: { societyId, deletedAt: null },
     orderBy: { roomNumber: 'asc' }
   });
 }
@@ -66,21 +129,21 @@ export async function updateDelivery(id: string, bottles: number) {
 }
 
 // ─── Independent Bottle Delivery ──────────────────────────────────────────────
-export async function addIndependentBottle(date: string, round1: number, round2: number, round3: number, round4: number) {
+export async function addIndependentBottle(date: string, round1: number, round2: number, round3: number, round4: number, round5: number) {
   const normalizedDate = new Date(date);
   normalizedDate.setUTCHours(0, 0, 0, 0);
-  const bottles = round1 + round2 + round3 + round4;
+  const bottles = round1 + round2 + round3 + round4 + round5;
 
   return prisma.independentBottleEntry.create({
-    data: { date: normalizedDate, round1, round2, round3, round4, bottles }
+    data: { date: normalizedDate, round1, round2, round3, round4, round5, bottles }
   });
 }
 
-export async function updateIndependentBottle(id: string, round1: number, round2: number, round3: number, round4: number) {
-  const bottles = round1 + round2 + round3 + round4;
+export async function updateIndependentBottle(id: string, round1: number, round2: number, round3: number, round4: number, round5: number) {
+  const bottles = round1 + round2 + round3 + round4 + round5;
   return prisma.independentBottleEntry.update({
     where: { id },
-    data: { round1, round2, round3, round4, bottles }
+    data: { round1, round2, round3, round4, round5, bottles }
   });
 }
 

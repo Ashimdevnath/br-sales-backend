@@ -14,9 +14,13 @@ router.post('/settings', WaterController.updateSettings);
 // Society
 router.get('/societies', WaterController.listSocieties);
 router.post('/societies', WaterController.createSociety);
+router.put('/societies/:id', WaterController.updateSociety);
+router.delete('/societies/:id', WaterController.deleteSociety);
 
 // Room
 router.post('/rooms', WaterController.createRoom);
+router.put('/rooms/:id', WaterController.updateRoom);
+router.delete('/rooms/:id', WaterController.deleteRoom);
 
 // Delivery
 router.post('/deliveries', WaterController.addDelivery);

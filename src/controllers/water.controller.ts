@@ -49,6 +49,37 @@ export async function createSociety(req: Request, res: Response): Promise<void> 
   }
 }
 
+export async function updateSociety(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    if (!name) {
+      res.status(400).json({ error: 'Society name is required' });
+      return;
+    }
+    const society = await WaterService.updateSociety(id, name);
+    res.status(200).json(society);
+  } catch (err: any) {
+    if (err.code === 'P2002') {
+      res.status(400).json({ error: 'A society with this name already exists' });
+      return;
+    }
+    console.error('[WaterController] updateSociety error:', err);
+    res.status(500).json({ error: 'Failed to update society' });
+  }
+}
+
+export async function deleteSociety(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    await WaterService.deleteSociety(id);
+    res.status(200).json({ message: 'Society deleted successfully' });
+  } catch (err) {
+    console.error('[WaterController] deleteSociety error:', err);
+    res.status(500).json({ error: 'Failed to delete society' });
+  }
+}
+
 // ─── Room ────────────────────────────────────────────────────────────────────
 export async function createRoom(req: Request, res: Response): Promise<void> {
   try {
@@ -66,6 +97,37 @@ export async function createRoom(req: Request, res: Response): Promise<void> {
     }
     console.error('[WaterController] createRoom error:', err);
     res.status(500).json({ error: 'Failed to create room' });
+  }
+}
+
+export async function updateRoom(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    const { roomNumber } = req.body;
+    if (!roomNumber) {
+      res.status(400).json({ error: 'Room number is required' });
+      return;
+    }
+    const room = await WaterService.updateRoom(id, roomNumber);
+    res.status(200).json(room);
+  } catch (err: any) {
+    if (err.code === 'P2002') {
+      res.status(400).json({ error: 'This room number already exists for the society.' });
+      return;
+    }
+    console.error('[WaterController] updateRoom error:', err);
+    res.status(500).json({ error: 'Failed to update room' });
+  }
+}
+
+export async function deleteRoom(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    await WaterService.deleteRoom(id);
+    res.status(200).json({ message: 'Room deleted successfully' });
+  } catch (err) {
+    console.error('[WaterController] deleteRoom error:', err);
+    res.status(500).json({ error: 'Failed to delete room' });
   }
 }
 
@@ -103,12 +165,12 @@ export async function updateDelivery(req: Request, res: Response): Promise<void>
 
 export async function addIndependentBottle(req: Request, res: Response): Promise<void> {
   try {
-    const { date, round1 = 0, round2 = 0, round3 = 0, round4 = 0 } = req.body;
+    const { date, round1 = 0, round2 = 0, round3 = 0, round4 = 0, round5 = 0 } = req.body;
     if (!date) {
       res.status(400).json({ error: 'date is required' });
       return;
     }
-    const entry = await WaterService.addIndependentBottle(date, Number(round1), Number(round2), Number(round3), Number(round4));
+    const entry = await WaterService.addIndependentBottle(date, Number(round1), Number(round2), Number(round3), Number(round4), Number(round5));
     res.status(201).json(entry);
   } catch (err) {
     console.error('[WaterController] addIndependentBottle error:', err);
@@ -119,8 +181,8 @@ export async function addIndependentBottle(req: Request, res: Response): Promise
 export async function updateIndependentBottle(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { round1 = 0, round2 = 0, round3 = 0, round4 = 0 } = req.body;
-    const entry = await WaterService.updateIndependentBottle(id as string, Number(round1), Number(round2), Number(round3), Number(round4));
+    const { round1 = 0, round2 = 0, round3 = 0, round4 = 0, round5 = 0 } = req.body;
+    const entry = await WaterService.updateIndependentBottle(id as string, Number(round1), Number(round2), Number(round3), Number(round4), Number(round5));
     res.status(200).json(entry);
   } catch (err) {
     console.error('[WaterController] updateIndependentBottle error:', err);
