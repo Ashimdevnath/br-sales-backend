@@ -150,12 +150,13 @@ export async function addDelivery(req: Request, res: Response): Promise<void> {
 export async function updateDelivery(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { bottles } = req.body;
+    const { bottles, date } = req.body;
     if (bottles === undefined) {
       res.status(400).json({ error: 'bottles (amount) is required' });
       return;
     }
-    const delivery = await WaterService.updateDelivery(id as string, Number(bottles));
+    const parsedDate = date ? (() => { const d = new Date(date); d.setUTCHours(0,0,0,0); return d; })() : undefined;
+    const delivery = await WaterService.updateDelivery(id as string, Number(bottles), parsedDate);
     res.status(200).json(delivery);
   } catch (err) {
     console.error('[WaterController] updateDelivery error:', err);

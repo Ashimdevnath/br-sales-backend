@@ -83,10 +83,14 @@ export async function sendWhatsAppBill(
 
   const to = formatPhoneForWhatsApp(sale.customerPhone);
   const message = sale._overrideBody || buildBillMessage(sale);
+  const apiUrl = `https://graph.facebook.com/${version}/${phoneNumberId}/messages`;
 
   try {
+    console.log(`[WhatsApp] Calling API: POST ${apiUrl}`);
+    console.log(`[WhatsApp] Recipient: ${to}`);
+    
     await axios.post(
-      `https://graph.facebook.com/${version}/${phoneNumberId}/messages`,
+      apiUrl,
       {
         messaging_product: 'whatsapp',
         recipient_type: 'individual',
@@ -106,7 +110,10 @@ export async function sendWhatsAppBill(
   } catch (err: unknown) {
     const error = err as { response?: { data?: unknown }; message?: string };
     const detail = error.response?.data ?? error.message;
-    console.error('[WhatsApp] API error:', JSON.stringify(detail));
-    return { success: false, error: String(detail) };
+    console.error('[WhatsApp] API error:', JSON.stringify(detail, null, 2));
+    
+    // Properly stringify objects so they don't become "[object Object]"
+    const errorString = typeof detail === 'object' ? JSON.stringify(detail) : String(detail);
+    return { success: false, error: errorString };
   }
 }

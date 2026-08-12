@@ -121,10 +121,13 @@ export async function addDelivery(roomId: string, date: Date, bottles: number) {
   });
 }
 
-export async function updateDelivery(id: string, bottles: number) {
+export async function updateDelivery(id: string, bottles: number, date?: Date) {
   return prisma.waterDelivery.update({
     where: { id },
-    data: { bottles }
+    data: { 
+      bottles,
+      ...(date && { date })
+    }
   });
 }
 
