@@ -5,6 +5,7 @@ import customerRoutes from './customer.routes';
 import reportRoutes from './report.routes';
 import waterRoutes from './water.routes';
 import whatsappRoutes from './whatsapp.routes';
+import backupRoutes from './backup.routes';
 
 /**
  * Registers all API routes on the Express application.
@@ -17,4 +18,5 @@ export function registerRoutes(app: Application): void {
   app.use('/api/reports', reportRoutes);
   app.use('/api/water', waterRoutes);
   app.use('/api/whatsapp', whatsappRoutes);
+  app.use('/api/backup', backupRoutes);
 }

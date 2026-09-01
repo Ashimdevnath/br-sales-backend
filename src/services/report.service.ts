@@ -8,6 +8,8 @@ export type ReportSummary = {
   totalRecords: number;
   pendingWhatsApp: number;
   avgOrderValue: number;
+  draftAmount: number;
+  draftCount: number;
 };
 
 export type DailyReportEntry = {
@@ -29,7 +31,7 @@ export async function getReportSummary(): Promise<ReportSummary> {
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
 
-  const [todaySales, allConfirmedSales, pendingWhatsApp, totalRecords] = await Promise.all([
+  const [todaySales, allConfirmedSales, pendingWhatsApp, totalRecords, draftSales] = await Promise.all([
     prisma.sale.findMany({
       where: { createdAt: { gte: todayStart, lt: todayEnd }, status: 'Confirmed' },
       select: { total: true },
@@ -42,9 +44,14 @@ export async function getReportSummary(): Promise<ReportSummary> {
       where: { whatsappStatus: { in: ['Pending', 'Failed'] } },
     }),
     prisma.sale.count(),
+    prisma.sale.findMany({
+      where: { status: 'Draft' },
+      select: { total: true },
+    }),
   ]);
 
   const todayRevenue = todaySales.reduce((s, r) => s + r.total, 0);
+  const draftAmount = draftSales.reduce((s, r) => s + r.total, 0);
   const avgOrderValue =
     allConfirmedSales.length > 0
       ? allConfirmedSales.reduce((s, r) => s + r.total, 0) / allConfirmedSales.length
@@ -56,6 +63,8 @@ export async function getReportSummary(): Promise<ReportSummary> {
     totalRecords,
     pendingWhatsApp,
     avgOrderValue: Math.round(avgOrderValue),
+    draftAmount,
+    draftCount: draftSales.length,
   };
 }
 
